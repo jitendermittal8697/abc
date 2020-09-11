@@ -1,0 +1,125 @@
+diff --git a/core/modules/comment/src/Plugin/Action/DeleteComment.php b/core/modules/comment/src/Plugin/Action/DeleteComment.php
+index ef6116cd2a..49a4d4ecc4 100644
+--- a/core/modules/comment/src/Plugin/Action/DeleteComment.php
++++ b/core/modules/comment/src/Plugin/Action/DeleteComment.php
+@@ -18,7 +18,8 @@
+  *
+  * @Action(
+  *   id = "comment_delete_action",
+- *   label = @Translation("Delete comment")
++ *   label = @Translation("Delete comment"),
++ *   type = "comment"
+  * )
+  */
+ class DeleteComment extends DeleteAction {
+diff --git a/core/modules/comment/src/Tests/Plugin/Action/DeleteCommentActionTest.php b/core/modules/comment/src/Tests/Plugin/Action/DeleteCommentActionTest.php
+new file mode 100644
+index 0000000000..6539ec43a0
+--- /dev/null
++++ b/core/modules/comment/src/Tests/Plugin/Action/DeleteCommentActionTest.php
+@@ -0,0 +1,43 @@
++<?php
++
++namespace Drupal\comment\Tests\Plugin\Action;
++
++use Drupal\KernelTests\KernelTestBase;
++
++/**
++ * Tests for the DeleteNodeAction plugin.
++ *
++ * @group action
++ * @group legacy
++ */
++class DeleteCommentActionTest extends KernelTestBase {
++
++  /**
++   * {@inheritdoc}
++   */
++  public static $modules = ['system', 'node', 'comment'];
++
++  /**
++   * {@inheritdoc}
++   */
++  protected function setUp() {
++    parent::setUp();
++  }
++
++  /**
++   * Test the delete node action plugin type.
++   *
++   * @expectedDeprecation Drupal\comment\Plugin\Action\DeleteComment is deprecated in Drupal 8.6.x, will be removed before Drupal 9.0.0. Use \Drupal\Core\Action\Plugin\Action\DeleteAction instead. See https://www.drupal.org/node/2934349.
++   */
++  public function testDeleteCommentActionType() {
++    /** @var \Drupal\Core\Action\ActionManager $plugin_manager */
++    $plugin_manager = $this->container->get('plugin.manager.action');
++    $configuration = [];
++    $definition = $plugin_manager
++      ->createInstance('comment_delete_action', $configuration)
++      ->getPluginDefinition();
++
++    $this->assertArrayHasKey('type', $definition, "Plugin comment_delete_action require a plugin type.");
++  }
++
++}
+diff --git a/core/modules/node/src/Plugin/Action/DeleteNode.php b/core/modules/node/src/Plugin/Action/DeleteNode.php
+index 64fbe120c2..96c96a50f6 100644
+--- a/core/modules/node/src/Plugin/Action/DeleteNode.php
++++ b/core/modules/node/src/Plugin/Action/DeleteNode.php
+@@ -18,7 +18,8 @@
+  *
+  * @Action(
+  *   id = "node_delete_action",
+- *   label = @Translation("Delete content")
++ *   label = @Translation("Delete content"),
++ *   type = "node"
+  * )
+  */
+ class DeleteNode extends DeleteAction {
+diff --git a/core/modules/node/src/Tests/Plugin/Action/DeleteNodeActionTest.php b/core/modules/node/src/Tests/Plugin/Action/DeleteNodeActionTest.php
+new file mode 100644
+index 0000000000..10cd4cd5f3
+--- /dev/null
++++ b/core/modules/node/src/Tests/Plugin/Action/DeleteNodeActionTest.php
+@@ -0,0 +1,42 @@
++<?php
++
++namespace Drupal\node\Tests\Plugin\Action;
++
++use Drupal\KernelTests\KernelTestBase;
++
++/**
++ * Tests for the DeleteNodeAction plugin.
++ *
++ * @group action
++ * @group legacy
++ */
++class DeleteNodeActionTest extends KernelTestBase {
++
++  /**
++   * {@inheritdoc}
++   */
++  public static $modules = ['system', 'node'];
++
++  /**
++   * {@inheritdoc}
++   */
++  protected function setUp() {
++    parent::setUp();
++  }
++
++  /**
++   * Test the delete node action plugin type.
++   * @expectedDeprecation Drupal\node\Plugin\Action\DeleteNode is deprecated in Drupal 8.6.x, will be removed before Drupal 9.0.0. Use \Drupal\Core\Action\Plugin\Action\DeleteAction instead. See https://www.drupal.org/node/2934349.
++   */
++  public function testDeleteNodeActionType() {
++    /** @var \Drupal\Core\Action\ActionManager $plugin_manager */
++    $plugin_manager = $this->container->get('plugin.manager.action');
++    $configuration = [];
++    $definition = $plugin_manager
++      ->createInstance('node_delete_action', $configuration)
++      ->getPluginDefinition();
++
++    $this->assertArrayHasKey('type', $definition, "Plugin node_delete_action require a plugin type.");
++  }
++
++}
